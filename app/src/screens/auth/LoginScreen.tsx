@@ -1,4 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { Text } from "react-native";
 import { apiErrorMessage, useAuth } from "../../auth/AuthContext";
@@ -26,6 +27,7 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<AuthStackPara
 
   return (
     <Screen style={{ justifyContent: "center" }}>
+      <StatusBar style="dark" />
       <Heading>Welkom terug 🎁</Heading>
       <Muted>Log in om je lijstjes, lootjes en Secret Santa te bekijken.</Muted>
       <TextInput

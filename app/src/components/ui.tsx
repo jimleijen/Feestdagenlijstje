@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
   ActivityIndicator,
@@ -9,7 +10,8 @@ import {
   View,
   ViewProps,
 } from "react-native";
-import { colors, radius, spacing } from "../theme/colors";
+import { colors, radius, shadow, spacing } from "../theme/colors";
+import { fonts } from "../theme/fonts";
 
 export function Screen({ children, style, ...rest }: ViewProps) {
   return (
@@ -21,7 +23,7 @@ export function Screen({ children, style, ...rest }: ViewProps) {
 
 export function Card({ children, style, ...rest }: ViewProps) {
   return (
-    <View style={[styles.card, style]} {...rest}>
+    <View style={[styles.card, shadow.card, style]} {...rest}>
       {children}
     </View>
   );
@@ -33,6 +35,12 @@ export function TextInput({ style, ...rest }: TextInputProps) {
   // base input styling (border/background/padding) instead of merging with it.
   return <RNTextInput placeholderTextColor={colors.textMuted} style={[styles.input, style]} {...rest} />;
 }
+
+const GRADIENTS: Record<string, [string, string]> = {
+  primary: [colors.primary, colors.primaryDark],
+  secondary: [colors.secondary, "#204F42"],
+  danger: [colors.danger, "#7E1B15"],
+};
 
 export function Button({
   title,
@@ -48,22 +56,43 @@ export function Button({
   disabled?: boolean;
 }) {
   const isDisabled = disabled || loading;
+
+  if (variant === "ghost") {
+    return (
+      <Pressable
+        onPress={onPress}
+        disabled={isDisabled}
+        style={({ pressed }) => [
+          styles.button,
+          styles.ghostButton,
+          styles.buttonSpacing,
+          isDisabled && { opacity: 0.5 },
+          pressed && !isDisabled && { opacity: 0.7 },
+        ]}
+      >
+        {loading ? (
+          <ActivityIndicator color={colors.primary} />
+        ) : (
+          <Text style={[styles.buttonText, { color: colors.primary }]}>{title}</Text>
+        )}
+      </Pressable>
+    );
+  }
+
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
       style={({ pressed }) => [
-        styles.button,
-        variantStyles[variant],
+        styles.buttonSpacing,
+        shadow.button,
         isDisabled && { opacity: 0.5 },
         pressed && !isDisabled && { opacity: 0.85 },
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={variant === "ghost" ? colors.primary : "#fff"} />
-      ) : (
-        <Text style={[styles.buttonText, variant === "ghost" && { color: colors.primary }]}>{title}</Text>
-      )}
+      <LinearGradient colors={GRADIENTS[variant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.button}>
+        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{title}</Text>}
+      </LinearGradient>
     </Pressable>
   );
 }
@@ -83,50 +112,59 @@ export function Muted({ children }: { children: React.ReactNode }) {
 export function EmptyState({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <View style={styles.emptyState}>
+      <Text style={styles.emptyStateIcon}>🎁</Text>
       <Text style={styles.heading}>{title}</Text>
-      {subtitle ? <Muted>{subtitle}</Muted> : null}
+      {subtitle ? <Text style={styles.emptyStateSubtitle}>{subtitle}</Text> : null}
     </View>
   );
 }
 
-const variantStyles = StyleSheet.create({
-  primary: { backgroundColor: colors.primary },
-  secondary: { backgroundColor: colors.secondary },
-  danger: { backgroundColor: colors.danger },
-  ghost: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.primary },
-});
-
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background, padding: spacing.lg },
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 2,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md + 4,
+    paddingVertical: spacing.sm + 4,
     fontSize: 16,
     color: colors.text,
     backgroundColor: colors.surface,
     marginBottom: spacing.sm,
   },
   button: {
-    borderRadius: radius.sm,
-    paddingVertical: spacing.sm + 4,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.sm + 6,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: spacing.sm,
   },
-  buttonText: { color: "#fff", fontWeight: "600", fontSize: 16 },
-  heading: { fontSize: 22, fontWeight: "700", color: colors.text, marginBottom: spacing.xs },
-  subHeading: { fontSize: 17, fontWeight: "600", color: colors.text, marginBottom: spacing.xs },
+  buttonSpacing: { marginBottom: spacing.sm },
+  ghostButton: {
+    backgroundColor: "transparent",
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+  },
+  buttonText: { color: "#fff", fontWeight: "700", fontSize: 16, letterSpacing: 0.2 },
+  heading: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.text, marginBottom: spacing.xs },
+  subHeading: { fontFamily: fonts.display, fontSize: 18, color: colors.text, marginBottom: spacing.xs },
   muted: { color: colors.textMuted, fontSize: 14 },
   emptyState: { alignItems: "center", paddingVertical: spacing.xl },
+  emptyStateIcon: { fontSize: 44, marginBottom: spacing.sm },
+  emptyStateSubtitle: {
+    fontFamily: fonts.display,
+    fontStyle: "italic",
+    color: colors.textMuted,
+    fontSize: 15,
+    textAlign: "center",
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.lg,
+  },
 });
