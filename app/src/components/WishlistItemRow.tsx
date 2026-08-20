@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Linking, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { wishlistsApi } from "../api/wishlists";
 import { colors, spacing } from "../theme/colors";
 import { WishlistItem } from "../types";
@@ -62,16 +62,7 @@ export function WishlistItemRow({
       </Text>
       {item.description ? <Text style={{ color: colors.textMuted, marginTop: 2 }}>{item.description}</Text> : null}
 
-      <PriceBadge itemId={item.id} />
-
-      {item.sourceUrl ? (
-        <Text
-          style={{ color: colors.gold, fontSize: 13, marginTop: spacing.xs }}
-          onPress={() => Linking.openURL(item.sourceUrl!)}
-        >
-          Origineel gedeelde link openen
-        </Text>
-      ) : null}
+      <PriceBadge itemId={item.id} sourceUrl={item.sourceUrl} />
 
       {isReserved ? (
         <View style={{ flexDirection: "row", alignItems: "center", marginTop: spacing.sm }}>

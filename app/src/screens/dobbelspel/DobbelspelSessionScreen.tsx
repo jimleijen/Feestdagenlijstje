@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import { gameApi } from "../../api/draws";
 import { apiErrorMessage } from "../../auth/AuthContext";
 import { Button, Card, Heading, Muted, Screen, SubHeading, TextInput } from "../../components/ui";
+import { Dice } from "../../components/Dice";
 import { announce } from "../../game/voice";
 import { useShakeToRoll } from "../../game/shakeDetector";
 import { colors, spacing } from "../../theme/colors";
@@ -81,8 +82,8 @@ export function DobbelspelSessionScreen({
       <Muted>Join-code: {session.joinCode}</Muted>
 
       <Card style={{ alignItems: "center", paddingVertical: spacing.xl, backgroundColor: colors.fieldBackground }}>
-        <Text style={{ fontSize: 90 }}>{face ? DICE_FACES[face] : "🎲"}</Text>
-        <Text style={{ color: colors.textMuted, fontSize: 14 }}>Schud je telefoon, of gooi hieronder</Text>
+        <Dice face={face} rolling={rolling} />
+        <Text style={{ color: colors.textMuted, fontSize: 14, marginTop: spacing.md }}>Schud je telefoon, of gooi hieronder</Text>
         <Button title={rolling ? "Gooien…" : "Gooi de dobbelsteen"} onPress={handleRoll} loading={rolling} />
         {activeRule ? (
           <View style={{ marginTop: spacing.md, alignItems: "center" }}>
