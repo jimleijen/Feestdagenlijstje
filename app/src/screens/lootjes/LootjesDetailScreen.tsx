@@ -90,16 +90,24 @@ export function LootjesDetailScreen({ route }: NativeStackScreenProps<LootjesSta
             <Button title="Toevoegen" onPress={handleAddParticipant} loading={busy} disabled={!name.trim() || !email.trim()} />
           </Card>
 
-          <FlatList
-            data={draw.participants}
-            keyExtractor={(p) => p.id}
-            ListEmptyComponent={<EmptyState title="Nog geen deelnemers" />}
-            renderItem={({ item }) => (
-              <Text style={{ paddingVertical: 6, color: colors.text }}>
-                {item.name} · {item.email}
-              </Text>
-            )}
-          />
+          {draw.participants.length > 0 ? (
+            <Card>
+              <SubHeading>Deelnemers</SubHeading>
+              <FlatList
+                data={draw.participants}
+                keyExtractor={(p) => p.id}
+                scrollEnabled={false}
+                ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.sm }} />}
+                renderItem={({ item }) => (
+                  <Text style={{ color: colors.text, fontSize: 15 }}>
+                    {item.name} · {item.email}
+                  </Text>
+                )}
+              />
+            </Card>
+          ) : (
+            <EmptyState title="Nog geen deelnemers" />
+          )}
 
           <Button
             title={`Loot nu! (${draw.participants.length} deelnemers)`}
@@ -128,9 +136,9 @@ export function LootjesDetailScreen({ route }: NativeStackScreenProps<LootjesSta
             <Muted>Alleen voor de organisator — bekijk wie wie heeft, voor als iemand het echt niet meer weet.</Muted>
             <Button title="Toon alle koppels" variant="ghost" onPress={handleAdminPeek} />
             {adminReveal ? (
-              <View style={{ marginTop: spacing.sm }}>
+              <View style={{ marginTop: spacing.md }}>
                 {adminReveal.map((a, i) => (
-                  <Text key={i} style={{ color: colors.text }}>
+                  <Text key={i} style={{ color: colors.text, fontSize: 15, marginBottom: spacing.xs }}>
                     {a.giver} → {a.receiver}
                   </Text>
                 ))}

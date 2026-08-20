@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { gameApi } from "../../api/draws";
 import { apiErrorMessage } from "../../auth/AuthContext";
 import { Button, Card, Heading, Muted, Screen, SubHeading, TextInput } from "../../components/ui";
@@ -77,42 +77,52 @@ export function DobbelspelSessionScreen({
   const activeRule = face ? session.rules.find((r) => r.face === face) : null;
 
   return (
-    <Screen>
+    <Screen style={{ paddingBottom: 0 }}>
       <Heading>{session.title}</Heading>
       <Muted>Join-code: {session.joinCode}</Muted>
 
-      <Card style={{ alignItems: "center", paddingVertical: spacing.xl }}>
-        <Dice face={face} rolling={rolling} />
-        <Muted>Schud je telefoon, of gooi hieronder</Muted>
-        <Button title={rolling ? "Gooien…" : "Gooi de dobbelsteen"} onPress={handleRoll} loading={rolling} />
-        {activeRule ? (
-          <View style={{ marginTop: spacing.md, alignItems: "center" }}>
-            <Text style={{ fontSize: 20, fontWeight: "700", color: colors.gold }}>{face}</Text>
-            <Text style={{ fontSize: 17, textAlign: "center", marginTop: spacing.xs, color: colors.text }}>
-              {activeRule.text}
-            </Text>
-          </View>
-        ) : null}
-      </Card>
-
-      <Button title={editing ? "Regels verbergen" : "Regels bewerken (host)"} variant="ghost" onPress={() => setEditing((e) => !e)} />
-      {error ? <Text style={{ color: "#C4392F" }}>{error}</Text> : null}
-      {editing ? (
-        <Card>
-          <SubHeading>Opdrachten per vlak</SubHeading>
-          {[1, 2, 3, 4, 5, 6].map((f) => (
-            <View key={f} style={{ marginBottom: spacing.sm }}>
-              <Text style={{ fontWeight: "600", color: colors.text }}>{DICE_FACES[f]} Vlak {f}</Text>
-              <TextInput
-                value={ruleDrafts[f] ?? ""}
-                onChangeText={(text) => setRuleDrafts((d) => ({ ...d, [f]: text }))}
-                onSubmitEditing={() => handleSaveRule(f)}
-                onBlur={() => handleSaveRule(f)}
-              />
+      {/* The dice itself is the whole point of this screen, so it gets centered in the
+          leftover vertical space rather than just sitting under the title — flexGrow lets
+          the same container scroll normally once the rule editor makes it taller than the
+          screen. */}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingBottom: spacing.xl }}>
+        <Card style={{ alignItems: "center", paddingVertical: spacing.xxl }}>
+          <Dice face={face} rolling={rolling} />
+          <View style={{ height: spacing.lg }} />
+          <Muted>Schud je telefoon, of gooi hieronder</Muted>
+          <Button title={rolling ? "Gooien…" : "Gooi de dobbelsteen"} onPress={handleRoll} loading={rolling} />
+          {activeRule ? (
+            <View style={{ marginTop: spacing.lg, alignItems: "center" }}>
+              <Text style={{ fontSize: 22, fontWeight: "700", color: colors.gold }}>{face}</Text>
+              <Text style={{ fontSize: 17, textAlign: "center", marginTop: spacing.sm, color: colors.text }}>
+                {activeRule.text}
+              </Text>
             </View>
-          ))}
+          ) : null}
         </Card>
-      ) : null}
+
+        <View style={{ height: spacing.md }} />
+        <Button title={editing ? "Regels verbergen" : "Regels bewerken (host)"} variant="ghost" onPress={() => setEditing((e) => !e)} />
+        {error ? <Text style={{ color: "#C4392F" }}>{error}</Text> : null}
+        {editing ? (
+          <Card>
+            <SubHeading>Opdrachten per vlak</SubHeading>
+            {[1, 2, 3, 4, 5, 6].map((f) => (
+              <View key={f} style={{ marginBottom: spacing.md }}>
+                <Text style={{ fontWeight: "600", color: colors.text, marginBottom: spacing.xs }}>
+                  {DICE_FACES[f]} Vlak {f}
+                </Text>
+                <TextInput
+                  value={ruleDrafts[f] ?? ""}
+                  onChangeText={(text) => setRuleDrafts((d) => ({ ...d, [f]: text }))}
+                  onSubmitEditing={() => handleSaveRule(f)}
+                  onBlur={() => handleSaveRule(f)}
+                />
+              </View>
+            ))}
+          </Card>
+        ) : null}
+      </ScrollView>
     </Screen>
   );
 }

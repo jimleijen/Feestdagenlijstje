@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { wishlistsApi } from "../api/wishlists";
 import { colors, spacing } from "../theme/colors";
 import { WishlistItem } from "../types";
-import { Button, TextInput } from "./ui";
+import { Button, Card, TextInput } from "./ui";
 import { PriceBadge } from "./PriceBadge";
 
 export function WishlistItemRow({
@@ -42,14 +42,7 @@ export function WishlistItemRow({
   }
 
   return (
-    <View
-      style={{
-        paddingVertical: spacing.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: colors.border,
-        opacity: isReserved ? 0.6 : 1,
-      }}
-    >
+    <Card style={{ opacity: isReserved ? 0.6 : 1 }}>
       <Text
         style={{
           fontSize: 16,
@@ -60,26 +53,25 @@ export function WishlistItemRow({
       >
         {item.title}
       </Text>
-      {item.description ? <Text style={{ color: colors.textMuted, marginTop: 2 }}>{item.description}</Text> : null}
+      {item.description ? <Text style={{ color: colors.textMuted, marginTop: spacing.xs }}>{item.description}</Text> : null}
 
-      <PriceBadge itemId={item.id} sourceUrl={item.sourceUrl} />
+      <View style={{ marginTop: spacing.sm }}>
+        <PriceBadge itemId={item.id} sourceUrl={item.sourceUrl} />
+      </View>
 
       {isReserved ? (
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: spacing.sm }}>
-          <Text style={{ color: colors.textMuted, flex: 1 }}>Afgestreept door {item.reservedByName}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: spacing.md }}>
+          <Text style={{ color: colors.textMuted, flex: 1, marginRight: spacing.sm }}>
+            Afgestreept door {item.reservedByName}
+          </Text>
           <Button title="Oeps, zet terug" variant="ghost" onPress={handleUndo} loading={busy} />
         </View>
       ) : (
-        <View style={{ marginTop: spacing.sm }}>
-          <TextInput
-            placeholder="Jouw naam (om af te strepen)"
-            value={buyerName}
-            onChangeText={setBuyerName}
-            style={{ marginBottom: spacing.xs }}
-          />
+        <View style={{ marginTop: spacing.md }}>
+          <TextInput placeholder="Jouw naam (om af te strepen)" value={buyerName} onChangeText={setBuyerName} />
           <Button title="Ik koop dit — afstrepen" onPress={handleReserve} loading={busy} disabled={!buyerName.trim()} />
         </View>
       )}
-    </View>
+    </Card>
   );
 }

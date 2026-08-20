@@ -113,6 +113,12 @@ export function Muted({ children }: { children: React.ReactNode }) {
   return <Text style={styles.muted}>{children}</Text>;
 }
 
+// A fixed vertical gap for the (rare) spots that need more room than a component's own
+// built-in margin gives — e.g. before a visually distinct section within the same screen.
+export function Spacer({ size = "lg" }: { size?: keyof typeof spacing }) {
+  return <View style={{ height: spacing[size] }} />;
+}
+
 export function EmptyState({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <View style={styles.emptyState}>
@@ -125,12 +131,12 @@ export function EmptyState({ title, subtitle }: { title: string; subtitle?: stri
 
 const styles = StyleSheet.create({
   screenRoot: { flex: 1, backgroundColor: colors.background },
-  screen: { flex: 1, padding: spacing.lg },
+  screen: { flex: 1, padding: spacing.lg, paddingBottom: spacing.xl },
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    padding: spacing.md,
-    marginBottom: spacing.md,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
     borderWidth: 1,
     borderColor: colors.border,
   },
@@ -138,41 +144,42 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.gold,
     borderRadius: radius.pill,
-    paddingHorizontal: spacing.md + 4,
-    paddingVertical: spacing.sm + 4,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     fontSize: 16,
     color: colors.fieldText,
     backgroundColor: colors.fieldBackground,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
   button: {
     borderRadius: radius.pill,
-    paddingVertical: spacing.sm + 6,
-    paddingHorizontal: spacing.lg,
-    minWidth: 120,
+    paddingVertical: spacing.md + 2,
+    paddingHorizontal: spacing.xl,
+    minWidth: 150,
+    minHeight: 54,
     alignItems: "center",
     justifyContent: "center",
   },
   buttonBorder: { borderWidth: 1, borderColor: "rgba(232, 205, 134, 0.5)" },
-  buttonSpacing: { marginBottom: spacing.sm },
+  buttonSpacing: { marginBottom: spacing.md },
   ghostButton: {
     backgroundColor: "transparent",
     borderWidth: 1.5,
     borderColor: colors.gold,
   },
-  buttonText: { color: colors.goldLight, fontWeight: "700", fontSize: 16, letterSpacing: 0.2 },
-  heading: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.gold, marginBottom: spacing.xs },
-  subHeading: { fontFamily: fonts.display, fontSize: 18, color: colors.text, marginBottom: spacing.xs },
-  muted: { color: colors.textMuted, fontSize: 14 },
+  buttonText: { color: colors.goldLight, fontWeight: "700", fontSize: 17, letterSpacing: 0.2 },
+  heading: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.gold, marginBottom: spacing.sm },
+  subHeading: { fontFamily: fonts.display, fontSize: 18, color: colors.text, marginBottom: spacing.sm },
+  muted: { color: colors.textMuted, fontSize: 14, marginBottom: spacing.sm },
   emptyState: { alignItems: "center", paddingVertical: spacing.xl },
-  emptyStateIcon: { fontSize: 44, marginBottom: spacing.sm },
+  emptyStateIcon: { fontSize: 44, marginBottom: spacing.md },
   emptyStateSubtitle: {
     fontFamily: fonts.display,
     fontStyle: "italic",
     color: colors.textMuted,
     fontSize: 15,
     textAlign: "center",
-    marginTop: spacing.xs,
+    marginTop: spacing.sm,
     paddingHorizontal: spacing.lg,
   },
 });
