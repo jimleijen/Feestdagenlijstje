@@ -14,28 +14,33 @@ const PIP_LAYOUTS: Record<number, boolean[]> = {
 };
 
 const SIZE = 128;
+const ROLL_DURATION = 820;
 
 export function Dice({ face, rolling }: { face: number | null; rolling: boolean }) {
-  const spin = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(1)).current;
+  const spinX = useRef(new Animated.Value(0)).current;
+  const spinY = useRef(new Animated.Value(0)).current;
+  const heightT = useRef(new Animated.Value(0)).current;
   const idlePulse = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (rolling) {
-      spin.setValue(0);
-      Animated.timing(spin, {
+      spinX.setValue(0);
+      spinY.setValue(0);
+      heightT.setValue(0);
+      // Two axes at different durations so it tumbles rather than spinning flat on one plane.
+      Animated.timing(spinX, { toValue: 1, duration: ROLL_DURATION, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+      Animated.timing(spinY, {
         toValue: 1,
-        duration: 760,
+        duration: ROLL_DURATION + 120,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
-      Animated.sequence([
-        Animated.timing(scale, { toValue: 1.18, duration: 140, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-        Animated.timing(scale, { toValue: 0.92, duration: 140, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
-        Animated.spring(scale, { toValue: 1, friction: 4, tension: 60, useNativeDriver: true }),
-      ]).start();
+      // One linear driver, shaped into a toss-up / fall / bounce / settle arc entirely via
+      // interpolation keyframes below — simpler and safer than chaining several Animated
+      // sequences on the same value.
+      Animated.timing(heightT, { toValue: 1, duration: ROLL_DURATION, easing: Easing.linear, useNativeDriver: true }).start();
     }
-  }, [rolling, spin, scale]);
+  }, [rolling, spinX, spinY, heightT]);
 
   useEffect(() => {
     if (rolling || face) return;
@@ -50,7 +55,24 @@ export function Dice({ face, rolling }: { face: number | null; rolling: boolean 
     return () => loop.stop();
   }, [rolling, face, idlePulse]);
 
-  const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "1080deg"] });
+  const rotateX = spinX.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "1160deg"] });
+  const rotateY = spinY.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "940deg"] });
+  // Toss up, fall, small bounce, settle — all keyframed off one 0..1 driver.
+  const liftY = heightT.interpolate({
+    inputRange: [0, 0.27, 0.62, 0.72, 0.85, 1],
+    outputRange: [0, -78, 0, -16, 0, 0],
+  });
+  const squashX = heightT.interpolate({
+    inputRange: [0, 0.27, 0.6, 0.65, 0.72, 0.85, 0.92, 1],
+    outputRange: [1, 1, 1, 1.14, 0.96, 1.06, 0.98, 1],
+  });
+  const squashY = heightT.interpolate({
+    inputRange: [0, 0.27, 0.6, 0.65, 0.72, 0.85, 0.92, 1],
+    outputRange: [1, 1, 1, 0.84, 1.04, 0.94, 1.02, 1],
+  });
+  const shadowScale = liftY.interpolate({ inputRange: [-78, 0], outputRange: [0.55, 1], extrapolate: "clamp" });
+  const shadowOpacity = liftY.interpolate({ inputRange: [-78, 0], outputRange: [0.12, 0.32], extrapolate: "clamp" });
+
   const idleScale = idlePulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] });
   const layout = PIP_LAYOUTS[face ?? 1];
 
@@ -59,15 +81,26 @@ export function Dice({ face, rolling }: { face: number | null; rolling: boolean 
       <Animated.View
         style={[
           styles.diceShadow,
-          { transform: [{ scale: rolling ? scale : face ? 1 : idleScale }, { rotate: rolling ? rotate : "0deg" }] },
+          {
+            transform: rolling
+              ? [
+                  { perspective: 900 },
+                  { translateY: liftY },
+                  { rotateX },
+                  { rotateY },
+                  { scaleX: squashX },
+                  { scaleY: squashY },
+                ]
+              : [
+                  { perspective: 900 },
+                  { rotateX: "-8deg" },
+                  { rotateY: "14deg" },
+                  { scale: face ? 1 : idleScale },
+                ],
+          },
         ]}
       >
-        <LinearGradient
-          colors={["#FFFDF6", "#F1E4C4"]}
-          start={{ x: 0.15, y: 0.1 }}
-          end={{ x: 0.9, y: 1 }}
-          style={styles.face}
-        >
+        <LinearGradient colors={["#7A4A2E", "#3E2113"]} start={{ x: 0.15, y: 0.05 }} end={{ x: 0.9, y: 1 }} style={styles.face}>
           <View style={styles.gloss} />
           <View style={styles.grid}>
             {layout.map((on, i) => (
@@ -82,7 +115,7 @@ export function Dice({ face, rolling }: { face: number | null; rolling: boolean 
           </View>
         </LinearGradient>
       </Animated.View>
-      <View style={styles.shadowEllipse} />
+      <Animated.View style={[styles.shadowEllipse, { transform: [{ scaleX: shadowScale }], opacity: rolling ? shadowOpacity : 0.28 }]} />
     </View>
   );
 }
@@ -92,15 +125,15 @@ const styles = StyleSheet.create({
   diceShadow: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 14 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.4,
     shadowRadius: 18,
     elevation: 14,
   },
   face: {
     width: SIZE,
     height: SIZE,
-    borderRadius: 26,
-    borderWidth: 2,
+    borderRadius: 22,
+    borderWidth: 2.5,
     borderColor: colors.gold,
     overflow: "hidden",
     padding: 14,
@@ -113,7 +146,7 @@ const styles = StyleSheet.create({
     height: SIZE * 0.9,
     borderRadius: SIZE,
     backgroundColor: "#FFFFFF",
-    opacity: 0.35,
+    opacity: 0.16,
   },
   grid: { flex: 1, flexDirection: "row", flexWrap: "wrap" },
   cell: { width: "33.33%", height: "33.33%", alignItems: "center", justifyContent: "center" },
@@ -121,10 +154,10 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: "#3A2418",
+    backgroundColor: colors.goldLight,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.5,
     shadowRadius: 2,
     alignItems: "center",
     justifyContent: "center",
@@ -133,7 +166,7 @@ const styles = StyleSheet.create({
     width: 5,
     height: 5,
     borderRadius: 3,
-    backgroundColor: "rgba(255,255,255,0.35)",
+    backgroundColor: "rgba(255,255,255,0.6)",
     marginBottom: 6,
     marginLeft: -4,
   },
@@ -142,7 +175,6 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 999,
     backgroundColor: "#000",
-    opacity: 0.25,
     marginTop: 10,
   },
 });

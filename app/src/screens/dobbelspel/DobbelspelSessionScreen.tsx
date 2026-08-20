@@ -81,14 +81,14 @@ export function DobbelspelSessionScreen({
       <Heading>{session.title}</Heading>
       <Muted>Join-code: {session.joinCode}</Muted>
 
-      <Card style={{ alignItems: "center", paddingVertical: spacing.xl, backgroundColor: colors.fieldBackground }}>
+      <Card style={{ alignItems: "center", paddingVertical: spacing.xl }}>
         <Dice face={face} rolling={rolling} />
-        <Text style={{ color: colors.textMuted, fontSize: 14, marginTop: spacing.md }}>Schud je telefoon, of gooi hieronder</Text>
+        <Muted>Schud je telefoon, of gooi hieronder</Muted>
         <Button title={rolling ? "Gooien…" : "Gooi de dobbelsteen"} onPress={handleRoll} loading={rolling} />
         {activeRule ? (
           <View style={{ marginTop: spacing.md, alignItems: "center" }}>
-            <Text style={{ fontSize: 20, fontWeight: "700", color: colors.primary }}>{face}</Text>
-            <Text style={{ fontSize: 17, textAlign: "center", marginTop: spacing.xs, color: colors.fieldText }}>
+            <Text style={{ fontSize: 20, fontWeight: "700", color: colors.gold }}>{face}</Text>
+            <Text style={{ fontSize: 17, textAlign: "center", marginTop: spacing.xs, color: colors.text }}>
               {activeRule.text}
             </Text>
           </View>

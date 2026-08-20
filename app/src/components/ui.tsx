@@ -148,6 +148,8 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: radius.pill,
     paddingVertical: spacing.sm + 6,
+    paddingHorizontal: spacing.lg,
+    minWidth: 120,
     alignItems: "center",
     justifyContent: "center",
   },
