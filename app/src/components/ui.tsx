@@ -12,11 +12,15 @@ import {
 } from "react-native";
 import { colors, radius, shadow, spacing } from "../theme/colors";
 import { fonts } from "../theme/fonts";
+import { FestiveBackground } from "./FestiveBackground";
 
 export function Screen({ children, style, ...rest }: ViewProps) {
   return (
-    <View style={[styles.screen, style]} {...rest}>
-      {children}
+    <View style={styles.screenRoot}>
+      <FestiveBackground />
+      <View style={[styles.screen, style]} {...rest}>
+        {children}
+      </View>
     </View>
   );
 }
@@ -38,7 +42,7 @@ export function TextInput({ style, ...rest }: TextInputProps) {
 
 const GRADIENTS: Record<string, [string, string]> = {
   primary: [colors.primary, colors.primaryDark],
-  secondary: [colors.secondary, "#204F42"],
+  secondary: [colors.secondary, colors.secondaryDark],
   danger: [colors.danger, "#7E1B15"],
 };
 
@@ -71,9 +75,9 @@ export function Button({
         ]}
       >
         {loading ? (
-          <ActivityIndicator color={colors.primary} />
+          <ActivityIndicator color={colors.gold} />
         ) : (
-          <Text style={[styles.buttonText, { color: colors.primary }]}>{title}</Text>
+          <Text style={[styles.buttonText, { color: colors.gold }]}>{title}</Text>
         )}
       </Pressable>
     );
@@ -90,8 +94,8 @@ export function Button({
         pressed && !isDisabled && { opacity: 0.85 },
       ]}
     >
-      <LinearGradient colors={GRADIENTS[variant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.button}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{title}</Text>}
+      <LinearGradient colors={GRADIENTS[variant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={[styles.button, styles.buttonBorder]}>
+        {loading ? <ActivityIndicator color={colors.goldLight} /> : <Text style={styles.buttonText}>{title}</Text>}
       </LinearGradient>
     </Pressable>
   );
@@ -120,9 +124,10 @@ export function EmptyState({ title, subtitle }: { title: string; subtitle?: stri
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background, padding: spacing.lg },
+  screenRoot: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1, padding: spacing.lg },
   card: {
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
@@ -131,13 +136,13 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1.5,
-    borderColor: colors.border,
+    borderColor: colors.gold,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.md + 4,
     paddingVertical: spacing.sm + 4,
     fontSize: 16,
-    color: colors.text,
-    backgroundColor: colors.surface,
+    color: colors.fieldText,
+    backgroundColor: colors.fieldBackground,
     marginBottom: spacing.sm,
   },
   button: {
@@ -146,14 +151,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  buttonBorder: { borderWidth: 1, borderColor: "rgba(232, 205, 134, 0.5)" },
   buttonSpacing: { marginBottom: spacing.sm },
   ghostButton: {
     backgroundColor: "transparent",
     borderWidth: 1.5,
-    borderColor: colors.primary,
+    borderColor: colors.gold,
   },
-  buttonText: { color: "#fff", fontWeight: "700", fontSize: 16, letterSpacing: 0.2 },
-  heading: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.text, marginBottom: spacing.xs },
+  buttonText: { color: colors.goldLight, fontWeight: "700", fontSize: 16, letterSpacing: 0.2 },
+  heading: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.gold, marginBottom: spacing.xs },
   subHeading: { fontFamily: fonts.display, fontSize: 18, color: colors.text, marginBottom: spacing.xs },
   muted: { color: colors.textMuted, fontSize: 14 },
   emptyState: { alignItems: "center", paddingVertical: spacing.xl },

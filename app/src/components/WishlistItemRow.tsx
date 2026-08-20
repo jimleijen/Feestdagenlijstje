@@ -66,7 +66,7 @@ export function WishlistItemRow({
 
       {item.sourceUrl ? (
         <Text
-          style={{ color: colors.primary, fontSize: 13, marginTop: spacing.xs }}
+          style={{ color: colors.gold, fontSize: 13, marginTop: spacing.xs }}
           onPress={() => Linking.openURL(item.sourceUrl!)}
         >
           Origineel gedeelde link openen

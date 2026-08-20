@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import { FlatList, Text } from "react-native";
 import { secretSantaApi } from "../../api/draws";
 import { Button, Card, EmptyState, Heading, Muted, Screen } from "../../components/ui";
+import { colors } from "../../theme/colors";
 import { SecretSantaStackParamList } from "../../navigation/types";
 import { NameDraw } from "../../types";
 
@@ -31,7 +32,7 @@ export function SecretSantaListScreen({
         renderItem={({ item }) => (
           <Card>
             <Text
-              style={{ fontSize: 17, fontWeight: "600" }}
+              style={{ fontSize: 17, fontWeight: "600", color: colors.gold }}
               onPress={() => navigation.navigate("SecretSantaDetail", { drawId: item.id })}
             >
               {item.title}

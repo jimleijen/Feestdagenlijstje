@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import { FlatList, Text } from "react-native";
 import { lootjesApi } from "../../api/draws";
 import { Button, Card, EmptyState, Heading, Muted, Screen } from "../../components/ui";
+import { colors } from "../../theme/colors";
 import { LootjesStackParamList } from "../../navigation/types";
 import { NameDraw } from "../../types";
 
@@ -28,7 +29,10 @@ export function LootjesListScreen({ navigation }: NativeStackScreenProps<Lootjes
         ListEmptyComponent={draws ? <EmptyState title="Nog geen trekking" subtitle="Start je eerste lootjestrekking." /> : null}
         renderItem={({ item }) => (
           <Card>
-            <Text style={{ fontSize: 17, fontWeight: "600" }} onPress={() => navigation.navigate("LootjesDetail", { drawId: item.id })}>
+            <Text
+              style={{ fontSize: 17, fontWeight: "600", color: colors.gold }}
+              onPress={() => navigation.navigate("LootjesDetail", { drawId: item.id })}
+            >
               {item.title}
             </Text>
             <Muted>

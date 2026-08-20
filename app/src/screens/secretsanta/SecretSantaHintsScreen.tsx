@@ -4,6 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { FlatList, Text } from "react-native";
 import { secretSantaApi } from "../../api/draws";
 import { Button, Card, EmptyState, Heading, Muted, Screen, SubHeading, TextInput } from "../../components/ui";
+import { colors } from "../../theme/colors";
 import { SecretSantaStackParamList } from "../../navigation/types";
 import { Hint } from "../../types";
 
@@ -45,7 +46,7 @@ export function SecretSantaHintsScreen({ route }: NativeStackScreenProps<SecretS
           data={myHints}
           keyExtractor={(h) => h.id}
           ListEmptyComponent={<Muted>Nog geen hints van jou.</Muted>}
-          renderItem={({ item }) => <Text style={{ paddingVertical: 4 }}>• {item.text}</Text>}
+          renderItem={({ item }) => <Text style={{ paddingVertical: 4, color: colors.text }}>• {item.text}</Text>}
         />
       </Card>
 
@@ -55,7 +56,7 @@ export function SecretSantaHintsScreen({ route }: NativeStackScreenProps<SecretS
           data={hintsToRead}
           keyExtractor={(h) => h.id}
           ListEmptyComponent={<EmptyState title="Nog geen hints beschikbaar" />}
-          renderItem={({ item }) => <Text style={{ paddingVertical: 4 }}>• {item.text}</Text>}
+          renderItem={({ item }) => <Text style={{ paddingVertical: 4, color: colors.text }}>• {item.text}</Text>}
         />
       </Card>
     </Screen>

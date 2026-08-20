@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { Text } from "react-native";
 import { apiErrorMessage, useAuth } from "../../auth/AuthContext";
@@ -28,7 +27,6 @@ export function RegisterScreen({ navigation }: NativeStackScreenProps<AuthStackP
 
   return (
     <Screen style={{ justifyContent: "center" }}>
-      <StatusBar style="dark" />
       <Heading>Account maken</Heading>
       <Muted>Nodig om lijstjes te delen en lootjes te trekken.</Muted>
       <TextInput placeholder="Naam" value={name} onChangeText={setName} style={{ marginTop: 20 }} />

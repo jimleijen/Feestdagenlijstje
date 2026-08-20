@@ -38,7 +38,7 @@ export function PriceBadge({ itemId }: { itemId: string }) {
   return (
     <Pressable onPress={() => Linking.openURL(cheapest.productUrl)}>
       <View style={{ flexDirection: "row", alignItems: "baseline", marginTop: spacing.xs }}>
-        <Text style={{ fontSize: 16, fontWeight: "700", color: colors.secondary }}>
+        <Text style={{ fontSize: 16, fontWeight: "700", color: colors.success }}>
           € {cheapest.price.toFixed(2)}
         </Text>
         <Text style={{ marginLeft: 6, fontSize: 13, color: colors.textMuted }}>

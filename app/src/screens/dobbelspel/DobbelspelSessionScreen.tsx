@@ -80,14 +80,16 @@ export function DobbelspelSessionScreen({
       <Heading>{session.title}</Heading>
       <Muted>Join-code: {session.joinCode}</Muted>
 
-      <Card style={{ alignItems: "center", paddingVertical: spacing.xl }}>
+      <Card style={{ alignItems: "center", paddingVertical: spacing.xl, backgroundColor: colors.fieldBackground }}>
         <Text style={{ fontSize: 90 }}>{face ? DICE_FACES[face] : "🎲"}</Text>
-        <Muted>Schud je telefoon, of gooi hieronder</Muted>
+        <Text style={{ color: colors.textMuted, fontSize: 14 }}>Schud je telefoon, of gooi hieronder</Text>
         <Button title={rolling ? "Gooien…" : "Gooi de dobbelsteen"} onPress={handleRoll} loading={rolling} />
         {activeRule ? (
           <View style={{ marginTop: spacing.md, alignItems: "center" }}>
             <Text style={{ fontSize: 20, fontWeight: "700", color: colors.primary }}>{face}</Text>
-            <Text style={{ fontSize: 17, textAlign: "center", marginTop: spacing.xs }}>{activeRule.text}</Text>
+            <Text style={{ fontSize: 17, textAlign: "center", marginTop: spacing.xs, color: colors.fieldText }}>
+              {activeRule.text}
+            </Text>
           </View>
         ) : null}
       </Card>
@@ -99,7 +101,7 @@ export function DobbelspelSessionScreen({
           <SubHeading>Opdrachten per vlak</SubHeading>
           {[1, 2, 3, 4, 5, 6].map((f) => (
             <View key={f} style={{ marginBottom: spacing.sm }}>
-              <Text style={{ fontWeight: "600" }}>{DICE_FACES[f]} Vlak {f}</Text>
+              <Text style={{ fontWeight: "600", color: colors.text }}>{DICE_FACES[f]} Vlak {f}</Text>
               <TextInput
                 value={ruleDrafts[f] ?? ""}
                 onChangeText={(text) => setRuleDrafts((d) => ({ ...d, [f]: text }))}

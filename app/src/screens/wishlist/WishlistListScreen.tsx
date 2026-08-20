@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import { FlatList, Text } from "react-native";
 import { wishlistsApi } from "../../api/wishlists";
 import { Button, Card, EmptyState, Heading, Muted, Screen } from "../../components/ui";
+import { colors } from "../../theme/colors";
 import { WishlistStackParamList } from "../../navigation/types";
 import { Wishlist } from "../../types";
 
@@ -31,7 +32,7 @@ export function WishlistListScreen({ navigation }: NativeStackScreenProps<Wishli
         renderItem={({ item }) => (
           <Card>
             <Text
-              style={{ fontSize: 17, fontWeight: "600" }}
+              style={{ fontSize: 17, fontWeight: "600", color: colors.gold }}
               onPress={() => navigation.navigate("WishlistDetail", { wishlistId: item.id })}
             >
               {item.title}

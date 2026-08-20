@@ -5,7 +5,7 @@ import { FlatList, Share, Text } from "react-native";
 import { wishlistsApi } from "../../api/wishlists";
 import { Button, Card, EmptyState, Heading, Muted, Screen, TextInput } from "../../components/ui";
 import { WishlistItemRow } from "../../components/WishlistItemRow";
-import { spacing } from "../../theme/colors";
+import { colors, spacing } from "../../theme/colors";
 import { WishlistStackParamList } from "../../navigation/types";
 import { Wishlist } from "../../types";
 
@@ -58,7 +58,7 @@ export function WishlistDetailScreen({
       <Button title="Deel dit lijstje" variant="secondary" onPress={handleShare} />
 
       <Card style={{ marginTop: spacing.md }}>
-        <Text style={{ fontWeight: "600", marginBottom: spacing.xs }}>Cadeau toevoegen</Text>
+        <Text style={{ fontWeight: "600", marginBottom: spacing.xs, color: colors.text }}>Cadeau toevoegen</Text>
         <TextInput placeholder="Wat wil je graag?" value={newTitle} onChangeText={setNewTitle} />
         <TextInput placeholder="Link naar webwinkel (optioneel)" value={newUrl} onChangeText={setNewUrl} autoCapitalize="none" />
         <Button title="Toevoegen" onPress={handleAddItem} loading={adding} disabled={!newTitle.trim()} />

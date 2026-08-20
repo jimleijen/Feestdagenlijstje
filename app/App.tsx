@@ -12,7 +12,7 @@ export default function App() {
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background }}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.gold} size="large" />
       </View>
     );
   }

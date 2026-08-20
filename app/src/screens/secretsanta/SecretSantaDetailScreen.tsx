@@ -5,7 +5,7 @@ import { FlatList, Text, View } from "react-native";
 import { secretSantaApi } from "../../api/draws";
 import { apiErrorMessage } from "../../auth/AuthContext";
 import { Button, Card, EmptyState, Heading, Muted, Screen, SubHeading, TextInput } from "../../components/ui";
-import { spacing } from "../../theme/colors";
+import { colors, spacing } from "../../theme/colors";
 import { SecretSantaStackParamList } from "../../navigation/types";
 import { NameDraw } from "../../types";
 
@@ -98,7 +98,7 @@ export function SecretSantaDetailScreen({
             keyExtractor={(p) => p.id}
             ListEmptyComponent={<EmptyState title="Nog geen deelnemers" />}
             renderItem={({ item }) => (
-              <Text style={{ paddingVertical: 6 }}>
+              <Text style={{ paddingVertical: 6, color: colors.text }}>
                 {item.name} · {item.email}
               </Text>
             )}
@@ -120,7 +120,7 @@ export function SecretSantaDetailScreen({
             <Button title="Wie heb ik?" onPress={handleRevealMine} />
             {myAssignment ? (
               <View style={{ marginTop: spacing.sm }}>
-                <Text style={{ fontSize: 18, fontWeight: "700" }}>Jij hebt: {myAssignment} 🎅</Text>
+                <Text style={{ fontSize: 18, fontWeight: "700", color: colors.gold }}>Jij hebt: {myAssignment} 🎅</Text>
               </View>
             ) : null}
           </Card>
@@ -138,7 +138,7 @@ export function SecretSantaDetailScreen({
             {adminReveal ? (
               <View style={{ marginTop: spacing.sm }}>
                 {adminReveal.map((a, i) => (
-                  <Text key={i}>
+                  <Text key={i} style={{ color: colors.text }}>
                     {a.giver} → {a.receiver}
                   </Text>
                 ))}

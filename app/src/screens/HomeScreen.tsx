@@ -1,24 +1,19 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { useAuth } from "../auth/AuthContext";
-import { Button, Card, Muted, SubHeading } from "../components/ui";
-import { colors, radius, spacing } from "../theme/colors";
-import { fonts } from "../theme/fonts";
+import { Button, Card, Heading, Muted, Screen, SubHeading } from "../components/ui";
+import { colors, spacing } from "../theme/colors";
 
 export function HomeScreen() {
   const { user, logout } = useAuth();
 
   return (
-    <View style={styles.root}>
-      <SafeAreaView edges={["top"]} style={styles.banner}>
-        <Text style={styles.bannerKicker}>✨ Fijne feestdagen ✨</Text>
-        <Text style={styles.bannerTitle}>Hoi {user?.name}</Text>
-      </SafeAreaView>
+    <Screen>
+      <Text style={styles.kicker}>✨ Fijne feestdagen ✨</Text>
+      <Heading>Hoi {user?.name}</Heading>
+      <Muted>Alles voor de feestdagen, overzichtelijk op één plek.</Muted>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <Muted>Alles voor de feestdagen, overzichtelijk op één plek.</Muted>
-
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Card>
           <SubHeading>🎁 Wensenlijstjes</SubHeading>
           <Muted>Maak een lijstje, deel de link, en zie in één oogopslag wat al afgestreept is.</Muted>
@@ -38,21 +33,11 @@ export function HomeScreen() {
 
         <Button title="Uitloggen" variant="ghost" onPress={logout} />
       </ScrollView>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
-  banner: {
-    backgroundColor: colors.header,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    borderBottomLeftRadius: radius.lg,
-    borderBottomRightRadius: radius.lg,
-  },
-  bannerKicker: { color: colors.gold, fontSize: 13, letterSpacing: 1, marginBottom: spacing.xs },
-  bannerTitle: { fontFamily: fonts.displayBold, color: colors.textOnDark, fontSize: 28 },
-  content: { padding: spacing.lg, paddingTop: spacing.md },
+  kicker: { color: colors.goldLight, fontSize: 13, letterSpacing: 1, marginBottom: spacing.xs },
+  content: { paddingTop: spacing.md, paddingBottom: spacing.lg },
 });

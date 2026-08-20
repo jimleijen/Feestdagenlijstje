@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
+import { View } from "react-native";
 import { HomeScreen } from "../screens/HomeScreen";
-import { colors, tabColors } from "../theme/colors";
+import { colors, shadow, tabColors } from "../theme/colors";
 import { fonts } from "../theme/fonts";
 import { DobbelspelNavigator } from "./DobbelspelNavigator";
 import { LootjesNavigator } from "./LootjesNavigator";
@@ -16,7 +17,9 @@ const Tab = createBottomTabNavigator();
 // flat single-tint template, while still making the active tab obvious.
 function tabIcon(name: keyof typeof Ionicons.glyphMap, tint: string) {
   return ({ focused }: { focused: boolean }) => (
-    <Ionicons name={name} size={24} color={tint} style={{ opacity: focused ? 1 : 0.62 }} />
+    <View style={focused ? { ...shadow.glow, shadowColor: tint } : undefined}>
+      <Ionicons name={name} size={24} color={tint} style={{ opacity: focused ? 1 : 0.55 }} />
+    </View>
   );
 }
 
