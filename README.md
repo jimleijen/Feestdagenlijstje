@@ -32,17 +32,21 @@ server/   Node + Express + TypeScript API, met Prisma (SQLite voor lokale dev, P
 
 ## Aan de slag
 
-```bash
-npm install               # installeert app/ en server/ als npm workspaces
+`app/` is bewust **geen** npm workspace: Expo's Metro-bundelaar leest z'n eigen `main`-veld
+relatief aan `app/node_modules`, en npm workspaces hoisten gedeelde dependencies (waaronder
+`expo` zelf) naar de root — dat laat Metro's dev-server een niet-bestaande URL genereren voor
+het entry-bestand. Daarom heeft `app/` een eigen, losstaande `npm install`.
 
-cp server/.env.example server/.env
-npm run server:dev --workspace=server   # prisma migrate + npx prisma migrate dev eerste keer
+```bash
+npm install                        # installeert alleen server/ (npm workspace)
+cd app && npm install && cd ..     # app/ heeft een eigen, aparte node_modules
 ```
 
-Eerste keer database opzetten:
+Database opzetten (eerste keer):
 
 ```bash
 cd server
+cp .env.example .env
 npx prisma migrate dev --name init
 ```
 
@@ -57,7 +61,15 @@ App starten (in een tweede terminal):
 ```bash
 cd app
 cp .env.example .env   # zet EXPO_PUBLIC_API_URL op je LAN-IP als je op een fysiek toestel test
-npm run start
+npm run start           # scan de QR-code met Expo Go, of druk op i/a voor een simulator
+```
+
+Snel in de browser kijken zonder telefoon/simulator (handig om UI te checken, maar
+"schud je telefoon" werkt hier niet — gebruik dan de "Gooi de dobbelsteen"-knop):
+
+```bash
+cd app
+npx expo start --web --offline   # --offline voorkomt een netwerkcheck die soms vastloopt
 ```
 
 ## Prijsvergelijking aanzetten

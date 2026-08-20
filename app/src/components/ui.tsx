@@ -27,8 +27,11 @@ export function Card({ children, style, ...rest }: ViewProps) {
   );
 }
 
-export function TextInput(props: TextInputProps) {
-  return <RNTextInput placeholderTextColor={colors.textMuted} style={[styles.input, props.style]} {...props} />;
+export function TextInput({ style, ...rest }: TextInputProps) {
+  // Destructure style out before spreading `rest` — spreading the original `props` after
+  // this component's own `style` prop let a caller-supplied `style` silently clobber the
+  // base input styling (border/background/padding) instead of merging with it.
+  return <RNTextInput placeholderTextColor={colors.textMuted} style={[styles.input, style]} {...rest} />;
 }
 
 export function Button({

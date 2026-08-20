@@ -42,9 +42,11 @@ export function WishlistDetailScreen({
 
   function handleShare() {
     if (!wishlist) return;
+    // Best-effort — unsupported on web/desktop browsers; failing to open the share sheet
+    // shouldn't surface as an error since the list itself is already saved either way.
     Share.share({
       message: `Bekijk mijn wensenlijstje "${wishlist.title}" op Feestdagenlijstje: feestdagenlijstje://lijst/${wishlist.shareCode}`,
-    });
+    }).catch(() => {});
   }
 
   if (!wishlist) return <Screen />;

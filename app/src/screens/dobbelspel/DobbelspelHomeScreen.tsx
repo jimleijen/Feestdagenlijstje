@@ -20,7 +20,11 @@ export function DobbelspelHomeScreen({
     setError(null);
     try {
       const session = await gameApi.create(title.trim());
-      Share.share({ message: `Doe mee met het cadeautjesspel "${session.title}"! Join-code: ${session.joinCode}` });
+      // Best-effort — unsupported on web/desktop browsers, and the join-code is shown on
+      // screen regardless, so a failure here shouldn't block starting the game.
+      Share.share({ message: `Doe mee met het cadeautjesspel "${session.title}"! Join-code: ${session.joinCode}` }).catch(
+        () => {}
+      );
       navigation.navigate("DobbelspelSession", { joinCode: session.joinCode });
     } catch (err) {
       setError(apiErrorMessage(err));
