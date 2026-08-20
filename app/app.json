@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Feestdagenlijstje",
+    "slug": "feestdagenlijstje",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "feestdagenlijstje",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#FFF6EE"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.feestdagenlijstje.mobile"
+    },
+    "android": {
+      "package": "app.feestdagenlijstje.mobile",
+      "permissions": []
+    }
+  }
+}

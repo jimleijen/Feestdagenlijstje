@@ -1,0 +1,157 @@
+// Feestdagenlijstje data model.
+// Dev uses SQLite for zero-config local runs; point DATABASE_URL at Postgres in production.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  wishlists       Wishlist[]
+  nameDraws       NameDraw[]        @relation("NameDrawOwner")
+  drawParticipant DrawParticipant[]
+  gameSessions    GameSession[]     @relation("GameSessionHost")
+}
+
+// ---- Wishlists (the core feature) ----
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  title     String
+  ownerId   String
+  shareCode String   @unique @default(cuid())
+  occasion  String? // e.g. "Sinterklaas", "Kerst", "Verjaardag"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  items WishlistItem[]
+}
+
+model WishlistItem {
+  id          String   @id @default(cuid())
+  wishlistId  String
+  title       String
+  description String?
+  imageUrl    String?
+  // Original link the wishlist owner pasted in; always shown alongside cheapest match.
+  sourceUrl   String?
+  priority    Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  // Reservation state: who is buying it, and the "oeps, verkeerd geklikt" undo.
+  reservedById   String?
+  reservedByName String?
+  reservedAt     DateTime?
+
+  wishlist    Wishlist     @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  priceQuotes PriceQuote[]
+
+  @@index([wishlistId])
+}
+
+// Cached results from webshop price providers for one item, refreshed on a TTL —
+// never shown to the buyer without a fresh-enough fetchedAt (see priceAggregator).
+model PriceQuote {
+  id             String   @id @default(cuid())
+  wishlistItemId String
+  shopName       String
+  price          Float
+  currency       String   @default("EUR")
+  productUrl     String
+  inStock        Boolean  @default(true)
+  fetchedAt      DateTime @default(now())
+
+  wishlistItem WishlistItem @relation(fields: [wishlistItemId], references: [id], onDelete: Cascade)
+
+  @@index([wishlistItemId])
+}
+
+// ---- Lootjes trekken / Secret Santa (shared engine, different presentation) ----
+
+// SQLite has no native enum type, so kind/status are plain strings.
+// kind:   "LOOTJES" | "SECRET_SANTA"
+// status: "OPEN" (participants can still be added) | "DRAWN" (assignments made, hidden by default) | "CLOSED"
+
+model NameDraw {
+  id        String    @id @default(cuid())
+  title     String
+  kind      String
+  ownerId   String
+  status    String    @default("OPEN")
+  budget    String? // optional free-text budget hint, e.g. "max 15 euro"
+  eventDate DateTime?
+  joinCode  String    @unique @default(cuid())
+  drawnAt   DateTime?
+  createdAt DateTime  @default(now())
+
+  owner        User              @relation("NameDrawOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  participants DrawParticipant[]
+}
+
+model DrawParticipant {
+  id        String  @id @default(cuid())
+  drawId    String
+  name      String
+  email     String
+  userId    String? // linked once they have an account, so they can look themselves up later
+  excludeIds String @default("[]") // JSON array of participant ids this person may NOT draw (e.g. partner)
+
+  // Assignment, set once the draw runs. Nullable until DrawStatus = DRAWN.
+  assignedToId String?
+
+  // Secret Santa extras: hints the giver can read about their assigned person.
+  hints           Hint[]  @relation("HintReceiver")
+
+  draw       NameDraw         @relation(fields: [drawId], references: [id], onDelete: Cascade)
+  user       User?            @relation(fields: [userId], references: [id])
+  assignedTo DrawParticipant? @relation("Assignment", fields: [assignedToId], references: [id])
+  assignedBy DrawParticipant[] @relation("Assignment")
+
+  @@index([drawId])
+}
+
+// A hint/wish written by a participant about themself, visible only to whoever drew them.
+model Hint {
+  id            String   @id @default(cuid())
+  participantId String // whose hint this is (the receiver)
+  text          String
+  createdAt     DateTime @default(now())
+
+  participant DrawParticipant @relation("HintReceiver", fields: [participantId], references: [id], onDelete: Cascade)
+}
+
+// ---- Cadeautjesspel (shake-to-roll dice game with round instructions) ----
+
+model GameSession {
+  id        String   @id @default(cuid())
+  title     String
+  hostId    String
+  joinCode  String   @unique @default(cuid())
+  createdAt DateTime @default(now())
+
+  host  User       @relation("GameSessionHost", fields: [hostId], references: [id], onDelete: Cascade)
+  rules GameRule[]
+}
+
+// Customizable per-face instructions, seeded with the classic ruleset but editable per session.
+model GameRule {
+  id        String @id @default(cuid())
+  sessionId String
+  face      Int // 1-6
+  text      String // e.g. "Iedereen schuift een plaats naar links"
+
+  session GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, face])
+}
