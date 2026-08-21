@@ -22,6 +22,7 @@ export function LootjesListScreen({ navigation }: NativeStackScreenProps<Lootjes
       <Heading>Lootjes trekken</Heading>
       <Muted>Voor surprises, sinterklaas of gewoon een pot met cadeautjes — vul namen en e-mails in, wij loten eerlijk.</Muted>
       <Button title="+ Nieuwe trekking" onPress={() => navigation.navigate("LootjesCreate")} />
+      <Button title="Doe mee met code" variant="ghost" onPress={() => navigation.navigate("LootjesJoin")} />
       <FlatList
         style={{ marginTop: 12 }}
         data={draws ?? []}

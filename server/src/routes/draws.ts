@@ -12,6 +12,43 @@ import { sendMail } from "../services/mailer";
  */
 export function createDrawRouter(kind: "LOOTJES" | "SECRET_SANTA") {
   const router = Router();
+
+  // Public self-join by code — registered before requireAuth below so someone who received
+  // a join code (shared outside the app, e.g. via WhatsApp) can add themselves without an
+  // account, mirroring the "deel uitnodigingslink" flow. Only exposes the draw's title/
+  // status, never the participant list, so joining doesn't leak who else is already in.
+  const joinSchema = z.object({ name: z.string().min(1), email: z.string().email() });
+
+  router.get("/join/:joinCode", async (req, res) => {
+    const draw = await prisma.nameDraw.findFirst({ where: { joinCode: req.params.joinCode, kind } });
+    if (!draw) return res.status(404).json({ error: "Trekking niet gevonden" });
+    res.json({ id: draw.id, title: draw.title, status: draw.status });
+  });
+
+  router.post("/join/:joinCode", async (req, res) => {
+    const draw = await prisma.nameDraw.findFirst({ where: { joinCode: req.params.joinCode, kind } });
+    if (!draw) return res.status(404).json({ error: "Trekking niet gevonden" });
+    if (draw.status !== "OPEN") return res.status(409).json({ error: "Deze trekking is al geloot, aanmelden kan niet meer" });
+
+    const parsed = joinSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
+
+    const existing = await prisma.drawParticipant.findFirst({ where: { drawId: draw.id, email: parsed.data.email } });
+    if (existing) return res.status(409).json({ error: "Dit e-mailadres staat al in deze trekking" });
+
+    const linkedUser = await prisma.user.findUnique({ where: { email: parsed.data.email } });
+    const participant = await prisma.drawParticipant.create({
+      data: {
+        drawId: draw.id,
+        name: parsed.data.name,
+        email: parsed.data.email,
+        userId: linkedUser?.id,
+        excludeIds: "[]",
+      },
+    });
+    res.status(201).json({ id: participant.id, name: participant.name });
+  });
+
   router.use(requireAuth);
 
   router.get("/", async (req: AuthedRequest, res) => {
@@ -78,6 +115,30 @@ export function createDrawRouter(kind: "LOOTJES" | "SECRET_SANTA") {
     if (draw.status !== "OPEN") return res.status(409).json({ error: "Er is al geloot, deelnemers verwijderen kan niet meer" });
     await prisma.drawParticipant.delete({ where: { id: req.params.participantId } });
     res.status(204).send();
+  });
+
+  const exclusionsSchema = z.object({ excludeIds: z.array(z.string()) });
+
+  // Sets who a participant may NOT draw (e.g. their partner) — separate from creation so the
+  // organiser can set this up in its own step once everyone's already been added.
+  router.patch("/:id/participants/:participantId/exclusions", async (req: AuthedRequest, res) => {
+    const draw = await prisma.nameDraw.findFirst({ where: { id: req.params.id, ownerId: req.userId, kind } });
+    if (!draw) return res.status(404).json({ error: "Trekking niet gevonden" });
+    if (draw.status !== "OPEN") return res.status(409).json({ error: "Er is al geloot, uitsluitingen aanpassen kan niet meer" });
+
+    const parsed = exclusionsSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
+
+    const participant = await prisma.drawParticipant.findFirst({
+      where: { id: req.params.participantId, drawId: draw.id },
+    });
+    if (!participant) return res.status(404).json({ error: "Deelnemer niet gevonden" });
+
+    const updated = await prisma.drawParticipant.update({
+      where: { id: participant.id },
+      data: { excludeIds: JSON.stringify(parsed.data.excludeIds) },
+    });
+    res.json({ id: updated.id, excludeIds: JSON.parse(updated.excludeIds) });
   });
 
   // Runs the draw, e-mails every participant who they have, and flips status to DRAWN.

@@ -13,6 +13,7 @@ export type LootjesStackParamList = {
   LootjesList: undefined;
   LootjesCreate: undefined;
   LootjesDetail: { drawId: string };
+  LootjesJoin: undefined;
 };
 
 export type SecretSantaStackParamList = {
@@ -20,6 +21,7 @@ export type SecretSantaStackParamList = {
   SecretSantaCreate: undefined;
   SecretSantaDetail: { drawId: string };
   SecretSantaHints: { drawId: string };
+  SecretSantaJoin: undefined;
 };
 
 export type DobbelspelStackParamList = {

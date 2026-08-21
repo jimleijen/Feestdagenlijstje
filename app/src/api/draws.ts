@@ -16,6 +16,13 @@ function drawsApiFor(basePath: "/lootjes" | "/secret-santa") {
       api.get<{ assignments: { giver: string; receiver: string }[] }>(`${basePath}/${id}/admin-peek`).then((r) => r.data),
     myAssignment: (id: string) =>
       api.get<{ receiverName: string; receiverParticipantId: string }>(`${basePath}/${id}/my-assignment`).then((r) => r.data),
+    setExclusions: (id: string, participantId: string, excludeIds: string[]) =>
+      api.patch(`${basePath}/${id}/participants/${participantId}/exclusions`, { excludeIds }).then((r) => r.data),
+    // Public — no auth required, used by people who received a join code to add themselves.
+    joinInfo: (joinCode: string) =>
+      api.get<{ id: string; title: string; status: string }>(`${basePath}/join/${joinCode}`).then((r) => r.data),
+    join: (joinCode: string, data: { name: string; email: string }) =>
+      api.post<{ id: string; name: string }>(`${basePath}/join/${joinCode}`, data).then((r) => r.data),
   };
 }
 

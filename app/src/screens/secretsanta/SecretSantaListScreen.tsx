@@ -24,6 +24,7 @@ export function SecretSantaListScreen({
       <Heading>Secret Santa 🎅</Heading>
       <Muted>Zoals lootjes trekken, maar met geheime hints over jezelf voor wie jou trekt.</Muted>
       <Button title="+ Nieuwe Secret Santa" onPress={() => navigation.navigate("SecretSantaCreate")} />
+      <Button title="Doe mee met code" variant="ghost" onPress={() => navigation.navigate("SecretSantaJoin")} />
       <FlatList
         style={{ marginTop: 12 }}
         data={draws ?? []}
