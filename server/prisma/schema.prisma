@@ -31,6 +31,10 @@ model Wishlist {
   ownerId   String
   shareCode String   @unique @default(cuid())
   occasion  String? // e.g. "Sinterklaas", "Kerst", "Verjaardag"
+  location  String? // free-text, e.g. "Leusden"
+  dateLabel String? // free-text, e.g. "29 januari" — not a real Date, so no locale/picker plumbing needed
+  note      String? // owner's note shown under the header card, e.g. "Eigen ideeën ook leuk!"
+  photoUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -50,9 +54,10 @@ model WishlistItem {
   createdAt   DateTime @default(now())
 
   // Reservation state: who is buying it, and the "oeps, verkeerd geklikt" undo.
-  reservedById   String?
-  reservedByName String?
-  reservedAt     DateTime?
+  reservedById    String?
+  reservedByName  String?
+  reservedByEmail String?
+  reservedAt      DateTime?
 
   wishlist    Wishlist     @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
   priceQuotes PriceQuote[]

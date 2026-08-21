@@ -22,6 +22,7 @@ export function WishlistListScreen({ navigation }: NativeStackScreenProps<Wishli
       <Heading>Wensenlijstjes</Heading>
       <Muted>Maak een lijstje en deel de link — anderen strepen af wat ze kopen.</Muted>
       <Button title="+ Nieuw lijstje" onPress={() => navigation.navigate("WishlistEdit", {})} />
+      <Button title="Gedeeld lijstje bekijken" variant="ghost" onPress={() => navigation.navigate("WishlistViewShared")} />
       <FlatList
         style={{ marginTop: 12 }}
         data={wishlists ?? []}

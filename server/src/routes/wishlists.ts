@@ -11,16 +11,21 @@ export const wishlistsRouter = Router();
 // mirroring how lijstje.nl works: anyone with the share link can view, reserve/afstrepen,
 // undo a reservation, and see prices — without logging in.
 
+function toPublicWishlist<T extends { owner: { name: string } }>(wishlist: T) {
+  const { owner, ...rest } = wishlist;
+  return { ...rest, ownerName: owner.name };
+}
+
 wishlistsRouter.get("/shared/:shareCode", async (req, res) => {
   const wishlist = await prisma.wishlist.findUnique({
     where: { shareCode: req.params.shareCode },
-    include: { items: { orderBy: { priority: "desc" } } },
+    include: { items: { orderBy: { priority: "desc" } }, owner: { select: { name: true } } },
   });
   if (!wishlist) return res.status(404).json({ error: "Lijstje niet gevonden" });
-  res.json(wishlist);
+  res.json(toPublicWishlist(wishlist));
 });
 
-const reserveSchema = z.object({ buyerName: z.string().min(1) });
+const reserveSchema = z.object({ buyerName: z.string().min(1), buyerEmail: z.string().email() });
 
 wishlistsRouter.post("/shared/:shareCode/items/:itemId/reserve", async (req, res) => {
   const item = await ensureItemInSharedList(req.params.shareCode, req.params.itemId);
@@ -32,21 +37,29 @@ wishlistsRouter.post("/shared/:shareCode/items/:itemId/reserve", async (req, res
 
   const updated = await prisma.wishlistItem.update({
     where: { id: item.id },
-    data: { reservedByName: parsed.data.buyerName, reservedAt: new Date() },
+    data: { reservedByName: parsed.data.buyerName, reservedByEmail: parsed.data.buyerEmail, reservedAt: new Date() },
   });
   res.json(updated);
 });
 
-// "Oeps, per ongeluk afgestreept" — reservation is only undoable by the same browser/session
-// that made it in the UI (the app keeps a local record of what it reserved); the server itself
-// doesn't gate this by identity so a forgetful buyer is never permanently locked out.
+const unreserveSchema = z.object({ buyerEmail: z.string().email() });
+
+// "Oeps, per ongeluk afgestreept" — only the person who made the reservation can undo it,
+// matched by the email they gave when they crossed it off (nobody else browsing the list
+// should be able to un-claim someone else's gift).
 wishlistsRouter.post("/shared/:shareCode/items/:itemId/unreserve", async (req, res) => {
   const item = await ensureItemInSharedList(req.params.shareCode, req.params.itemId);
   if (!item) return res.status(404).json({ error: "Item niet gevonden" });
 
+  const parsed = unreserveSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
+  if (item.reservedByEmail !== parsed.data.buyerEmail) {
+    return res.status(403).json({ error: "Dit is niet jouw afgestreepte cadeau" });
+  }
+
   const updated = await prisma.wishlistItem.update({
     where: { id: item.id },
-    data: { reservedByName: null, reservedById: null, reservedAt: null },
+    data: { reservedByName: null, reservedById: null, reservedByEmail: null, reservedAt: null },
   });
   res.json(updated);
 });
@@ -76,10 +89,16 @@ wishlistsRouter.get("/", async (req: AuthedRequest, res) => {
   res.json(wishlists);
 });
 
-const createWishlistSchema = z.object({
+const wishlistHeaderFields = {
   title: z.string().min(1),
   occasion: z.string().optional(),
-});
+  location: z.string().optional(),
+  dateLabel: z.string().optional(),
+  note: z.string().optional(),
+  photoUrl: z.string().optional(),
+};
+
+const createWishlistSchema = z.object(wishlistHeaderFields);
 
 wishlistsRouter.post("/", async (req: AuthedRequest, res) => {
   const parsed = createWishlistSchema.safeParse(req.body);
@@ -94,10 +113,23 @@ wishlistsRouter.post("/", async (req: AuthedRequest, res) => {
 wishlistsRouter.get("/:id", async (req: AuthedRequest, res) => {
   const wishlist = await prisma.wishlist.findFirst({
     where: { id: req.params.id, ownerId: req.userId },
-    include: { items: { orderBy: { priority: "desc" } } },
+    include: { items: { orderBy: { priority: "desc" } }, owner: { select: { name: true } } },
   });
   if (!wishlist) return res.status(404).json({ error: "Lijstje niet gevonden" });
-  res.json(wishlist);
+  res.json(toPublicWishlist(wishlist));
+});
+
+const updateWishlistSchema = z.object(wishlistHeaderFields).partial();
+
+wishlistsRouter.patch("/:id", async (req: AuthedRequest, res) => {
+  const wishlist = await prisma.wishlist.findFirst({ where: { id: req.params.id, ownerId: req.userId } });
+  if (!wishlist) return res.status(404).json({ error: "Lijstje niet gevonden" });
+
+  const parsed = updateWishlistSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
+
+  const updated = await prisma.wishlist.update({ where: { id: wishlist.id }, data: parsed.data });
+  res.json(updated);
 });
 
 wishlistsRouter.delete("/:id", async (req: AuthedRequest, res) => {

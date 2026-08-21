@@ -5,8 +5,9 @@ export type AuthStackParamList = {
 
 export type WishlistStackParamList = {
   WishlistList: undefined;
-  WishlistDetail: { wishlistId: string };
+  WishlistDetail: { wishlistId?: string; shareCode?: string };
   WishlistEdit: { wishlistId?: string };
+  WishlistViewShared: undefined;
 };
 
 export type LootjesStackParamList = {

@@ -7,7 +7,13 @@ export interface User {
 export interface Wishlist {
   id: string;
   title: string;
+  ownerId: string;
+  ownerName: string;
   occasion?: string | null;
+  location?: string | null;
+  dateLabel?: string | null;
+  note?: string | null;
+  photoUrl?: string | null;
   shareCode: string;
   createdAt: string;
   items?: WishlistItem[];
@@ -22,6 +28,7 @@ export interface WishlistItem {
   sourceUrl?: string | null;
   priority: number;
   reservedByName?: string | null;
+  reservedByEmail?: string | null;
   reservedAt?: string | null;
 }
 
