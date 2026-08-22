@@ -12,7 +12,7 @@ export function RootNavigator() {
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background }}>
-        <ActivityIndicator color={colors.gold} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }

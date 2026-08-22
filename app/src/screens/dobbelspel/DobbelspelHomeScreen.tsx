@@ -5,6 +5,7 @@ import { gameApi } from "../../api/draws";
 import { apiErrorMessage } from "../../auth/AuthContext";
 import { Button, Card, Heading, Muted, Screen, SubHeading, TextInput } from "../../components/ui";
 import { DobbelspelStackParamList } from "../../navigation/types";
+import { colors } from "../../theme/colors";
 
 export function DobbelspelHomeScreen({
   navigation,
@@ -46,7 +47,7 @@ export function DobbelspelHomeScreen({
       <Card>
         <SubHeading>Nieuw spel starten</SubHeading>
         <TextInput placeholder="Naam van het spel" value={title} onChangeText={setTitle} />
-        {error ? <Text style={{ color: "#C4392F", marginBottom: 8 }}>{error}</Text> : null}
+        {error ? <Text style={{ color: colors.danger, marginBottom: 8 }}>{error}</Text> : null}
         <Button title="Starten & deel join-code" onPress={handleCreate} loading={loading} disabled={!title.trim()} />
       </Card>
 

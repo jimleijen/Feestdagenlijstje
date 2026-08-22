@@ -5,6 +5,8 @@ import { gameApi } from "../../api/draws";
 import { apiErrorMessage } from "../../auth/AuthContext";
 import { Button, Card, Heading, Muted, Screen, SubHeading, TextInput } from "../../components/ui";
 import { Dice } from "../../components/Dice";
+import { RuleFlash } from "../../components/RuleFlash";
+import { RoundTimer } from "../../components/RoundTimer";
 import { announce } from "../../game/voice";
 import { useShakeToRoll } from "../../game/shakeDetector";
 import { colors, spacing } from "../../theme/colors";
@@ -20,6 +22,7 @@ export function DobbelspelSessionScreen({
   const [session, setSession] = useState<GameSession | null>(null);
   const [face, setFace] = useState<number | null>(null);
   const [rolling, setRolling] = useState(false);
+  const [rollId, setRollId] = useState(0);
   const [editing, setEditing] = useState(false);
   const [ruleDrafts, setRuleDrafts] = useState<Record<number, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +57,7 @@ export function DobbelspelSessionScreen({
         const finalFace = 1 + Math.floor(Math.random() * 6);
         setFace(finalFace);
         setRolling(false);
+        setRollId((id) => id + 1);
         const rule = sessionRef.current?.rules.find((r) => r.face === finalFace);
         if (rule) announce(`${finalFace}! ${rule.text}`);
       }
@@ -91,19 +95,14 @@ export function DobbelspelSessionScreen({
           <View style={{ height: spacing.lg }} />
           <Muted>Schud je telefoon, of gooi hieronder</Muted>
           <Button title={rolling ? "Gooien…" : "Gooi de dobbelsteen"} onPress={handleRoll} loading={rolling} />
-          {activeRule ? (
-            <View style={{ marginTop: spacing.lg, alignItems: "center" }}>
-              <Text style={{ fontSize: 22, fontWeight: "700", color: colors.gold }}>{face}</Text>
-              <Text style={{ fontSize: 17, textAlign: "center", marginTop: spacing.sm, color: colors.text }}>
-                {activeRule.text}
-              </Text>
-            </View>
-          ) : null}
+          {activeRule && face ? <RuleFlash rollId={rollId} face={face} text={activeRule.text} /> : null}
         </Card>
+
+        <RoundTimer />
 
         <View style={{ height: spacing.md }} />
         <Button title={editing ? "Regels verbergen" : "Regels bewerken (host)"} variant="ghost" onPress={() => setEditing((e) => !e)} />
-        {error ? <Text style={{ color: "#C4392F" }}>{error}</Text> : null}
+        {error ? <Text style={{ color: colors.danger }}>{error}</Text> : null}
         {editing ? (
           <Card>
             <SubHeading>Opdrachten per vlak</SubHeading>

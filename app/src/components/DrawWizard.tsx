@@ -164,7 +164,7 @@ export function DrawWizard({
         <View>
           <TextInput placeholder={titlePlaceholder} value={title} onChangeText={setTitle} />
           <TextInput placeholder="Budget (optioneel), bv. max 15 euro" value={budget} onChangeText={setBudget} />
-          {error ? <Text style={{ color: "#C4392F", marginBottom: spacing.xs }}>{error}</Text> : null}
+          {error ? <Text style={{ color: colors.danger, marginBottom: spacing.xs }}>{error}</Text> : null}
           <Button title="Volgende: deelnemers" onPress={handleCreateDraw} loading={loading} disabled={!title.trim()} />
         </View>
       ) : null}
@@ -207,7 +207,7 @@ export function DrawWizard({
           <Button title="Deel join-code" variant="ghost" onPress={handleShareCode} />
           <Muted>Anderen kunnen zichzelf ook toevoegen via "Doe mee met code" op het Lootjes-overzicht.</Muted>
 
-          {error ? <Text style={{ color: "#C4392F", marginBottom: spacing.xs }}>{error}</Text> : null}
+          {error ? <Text style={{ color: colors.danger, marginBottom: spacing.xs }}>{error}</Text> : null}
           <Button
             title="Volgende: uitsluitingen"
             onPress={() => setStep(3)}
@@ -288,7 +288,7 @@ export function DrawWizard({
               );
             })}
           </ScrollView>
-          {error ? <Text style={{ color: "#C4392F", marginTop: spacing.xs }}>{error}</Text> : null}
+          {error ? <Text style={{ color: colors.danger, marginTop: spacing.xs }}>{error}</Text> : null}
           <Button title="Klaar — naar overzicht" onPress={() => onCreated(draw.id)} />
         </View>
       ) : null}

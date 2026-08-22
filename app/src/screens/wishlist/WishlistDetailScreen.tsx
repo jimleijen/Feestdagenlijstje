@@ -15,7 +15,7 @@ import { Wishlist } from "../../types";
 function InfoRow({ icon, text }: { icon: keyof typeof Ionicons.glyphMap; text: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.xs }}>
-      <Ionicons name={icon} size={16} color={colors.gold} style={{ width: 22 }} />
+      <Ionicons name={icon} size={16} color={colors.accent} style={{ width: 22 }} />
       <Text style={{ color: colors.text, fontSize: 15, flexShrink: 1 }}>{text}</Text>
     </View>
   );
@@ -117,8 +117,8 @@ export function WishlistDetailScreen({
               onPress={() => setItemsOpen((o) => !o)}
               style={{ flexDirection: "row", alignItems: "center", marginBottom: spacing.md }}
             >
-              <Ionicons name={itemsOpen ? "chevron-down" : "chevron-forward"} size={20} color={colors.gold} />
-              <Text style={{ fontFamily: fonts.displayBold, fontSize: 18, color: colors.gold, marginLeft: spacing.xs }}>
+              <Ionicons name={itemsOpen ? "chevron-down" : "chevron-forward"} size={20} color={colors.accent} />
+              <Text style={{ fontFamily: fonts.displayBold, fontSize: 18, color: colors.accent, marginLeft: spacing.xs }}>
                 Lijstje
               </Text>
             </Pressable>

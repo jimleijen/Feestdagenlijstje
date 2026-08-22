@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.surface,
   },
-  circleActive: { backgroundColor: colors.gold, borderColor: colors.gold },
+  circleActive: { backgroundColor: colors.accent, borderColor: colors.accent },
   circleText: { color: colors.textMuted, fontWeight: "700", fontSize: 13 },
   circleTextActive: { color: colors.header },
   line: { flex: 1, height: 2, backgroundColor: colors.border, marginHorizontal: 4 },
-  lineActive: { backgroundColor: colors.gold },
+  lineActive: { backgroundColor: colors.accent },
 });

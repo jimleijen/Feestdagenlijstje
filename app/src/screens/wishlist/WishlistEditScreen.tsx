@@ -5,6 +5,7 @@ import { apiErrorMessage } from "../../auth/AuthContext";
 import { wishlistsApi } from "../../api/wishlists";
 import { Button, Heading, Muted, Screen, TextInput } from "../../components/ui";
 import { WishlistStackParamList } from "../../navigation/types";
+import { colors } from "../../theme/colors";
 
 export function WishlistEditScreen({
   route,
@@ -78,7 +79,7 @@ export function WishlistEditScreen({
         style={{ height: 90, textAlignVertical: "top" }}
       />
       <Muted>Deze gegevens komen boven aan je lijstje te staan, net als bij een echte verlanglijst.</Muted>
-      {error ? <Text style={{ color: "#C4392F", marginBottom: 8 }}>{error}</Text> : null}
+      {error ? <Text style={{ color: colors.danger, marginBottom: 8 }}>{error}</Text> : null}
       <Button title={isEditing ? "Opslaan" : "Lijstje aanmaken"} onPress={handleSave} loading={loading} disabled={!title.trim()} />
     </Screen>
   );

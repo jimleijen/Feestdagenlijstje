@@ -59,7 +59,7 @@ export function JoinDrawForm({ api }: { api: JoinApi }) {
     return (
       <View>
         <TextInput placeholder="Join-code" value={joinCode} onChangeText={setJoinCode} autoCapitalize="none" />
-        {error ? <Text style={{ color: "#C4392F", marginBottom: spacing.xs }}>{error}</Text> : null}
+        {error ? <Text style={{ color: colors.danger, marginBottom: spacing.xs }}>{error}</Text> : null}
         <Button title="Zoek trekking" onPress={handleLookup} loading={loading} disabled={!joinCode.trim()} />
       </View>
     );

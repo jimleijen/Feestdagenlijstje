@@ -5,6 +5,7 @@ import { FlatList, Text, View } from "react-native";
 import { lootjesApi } from "../../api/draws";
 import { apiErrorMessage } from "../../auth/AuthContext";
 import { Button, Card, EmptyState, Heading, Muted, Screen, SubHeading, TextInput } from "../../components/ui";
+import { RevealGiftModal } from "../../components/RevealGiftModal";
 import { colors, spacing } from "../../theme/colors";
 import { LootjesStackParamList } from "../../navigation/types";
 import { NameDraw } from "../../types";
@@ -17,6 +18,8 @@ export function LootjesDetailScreen({ route }: NativeStackScreenProps<LootjesSta
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const [revealOpen, setRevealOpen] = useState(false);
+  const [revealLoading, setRevealLoading] = useState(false);
   const [myAssignment, setMyAssignment] = useState<string | null>(null);
   const [adminReveal, setAdminReveal] = useState<{ giver: string; receiver: string }[] | null>(null);
 
@@ -56,11 +59,16 @@ export function LootjesDetailScreen({ route }: NativeStackScreenProps<LootjesSta
   }
 
   async function handleRevealMine() {
+    setRevealOpen(true);
+    setRevealLoading(true);
     try {
       const result = await lootjesApi.myAssignment(drawId);
       setMyAssignment(result.receiverName);
     } catch (err) {
       setError(apiErrorMessage(err));
+      setRevealOpen(false);
+    } finally {
+      setRevealLoading(false);
     }
   }
 
@@ -79,7 +87,7 @@ export function LootjesDetailScreen({ route }: NativeStackScreenProps<LootjesSta
     <Screen>
       <Heading>{draw.title}</Heading>
       {draw.budget ? <Muted>Budget: {draw.budget}</Muted> : null}
-      {error ? <Text style={{ color: "#C4392F", marginVertical: 8 }}>{error}</Text> : null}
+      {error ? <Text style={{ color: colors.danger, marginVertical: 8 }}>{error}</Text> : null}
 
       {draw.status === "OPEN" ? (
         <>
@@ -122,14 +130,20 @@ export function LootjesDetailScreen({ route }: NativeStackScreenProps<LootjesSta
         <>
           <Card>
             <SubHeading>Geloot! Iedereen heeft een e-mail ontvangen.</SubHeading>
-            <Muted>Ben je het vergeten? Kijk hieronder wie jij hebt getrokken.</Muted>
-            <Button title="Wie heb ik?" onPress={handleRevealMine} />
-            {myAssignment ? (
-              <View style={{ marginTop: spacing.sm }}>
-                <Text style={{ fontSize: 18, fontWeight: "700", color: colors.gold }}>Jij hebt: {myAssignment} 🎁</Text>
-              </View>
-            ) : null}
+            <Muted>Ben je het vergeten? Pak hieronder je cadeau uit.</Muted>
+            <Button title="Wie heb ik? 🎁" onPress={handleRevealMine} />
           </Card>
+
+          <RevealGiftModal
+            visible={revealOpen}
+            loading={revealLoading}
+            name={myAssignment}
+            emoji="🎁"
+            onClose={() => {
+              setRevealOpen(false);
+              setMyAssignment(null);
+            }}
+          />
 
           <Card>
             <SubHeading>Geheime beheerfunctie</SubHeading>

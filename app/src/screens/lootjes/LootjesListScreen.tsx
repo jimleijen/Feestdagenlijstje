@@ -31,7 +31,7 @@ export function LootjesListScreen({ navigation }: NativeStackScreenProps<Lootjes
         renderItem={({ item }) => (
           <Card>
             <Text
-              style={{ fontSize: 17, fontWeight: "600", color: colors.gold }}
+              style={{ fontSize: 17, fontWeight: "600", color: colors.accent }}
               onPress={() => navigation.navigate("LootjesDetail", { drawId: item.id })}
             >
               {item.title}

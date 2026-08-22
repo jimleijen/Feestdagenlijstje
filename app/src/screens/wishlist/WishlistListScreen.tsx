@@ -33,7 +33,7 @@ export function WishlistListScreen({ navigation }: NativeStackScreenProps<Wishli
         renderItem={({ item }) => (
           <Card>
             <Text
-              style={{ fontSize: 17, fontWeight: "600", color: colors.gold }}
+              style={{ fontSize: 17, fontWeight: "600", color: colors.accent }}
               onPress={() => navigation.navigate("WishlistDetail", { wishlistId: item.id })}
             >
               {item.title}

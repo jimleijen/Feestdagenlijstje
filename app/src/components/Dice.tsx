@@ -137,7 +137,7 @@ export function Dice({ face, rolling }: { face: number | null; rolling: boolean 
             },
           ]}
         >
-          <LinearGradient colors={["#A9744A", "#7A4A2E"]} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={styles.faceFill} />
+          <LinearGradient colors={["#EDE1FF", "#C9AEFF"]} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={styles.faceFill} />
         </Animated.View>
 
         {/* Right face — hinged at its own left edge (shared with the front face's right
@@ -156,7 +156,7 @@ export function Dice({ face, rolling }: { face: number | null; rolling: boolean 
             },
           ]}
         >
-          <LinearGradient colors={["#3E2113", "#241206"]} start={{ x: 0.1, y: 0 }} end={{ x: 0.9, y: 1 }} style={styles.faceFill} />
+          <LinearGradient colors={["#B79CFF", "#7C4FE0"]} start={{ x: 0.1, y: 0 }} end={{ x: 0.9, y: 1 }} style={styles.faceFill} />
         </Animated.View>
 
         {/* Front face — the value that actually counts. Tumbles on its own while rolling;
@@ -182,7 +182,7 @@ export function Dice({ face, rolling }: { face: number | null; rolling: boolean 
             },
           ]}
         >
-          <LinearGradient colors={["#9A6540", "#4A2818"]} start={{ x: 0.15, y: 0.05 }} end={{ x: 0.9, y: 1 }} style={styles.faceFill}>
+          <LinearGradient colors={["#FFFFFF", "#F5EFFF"]} start={{ x: 0.15, y: 0.05 }} end={{ x: 0.9, y: 1 }} style={styles.faceFill}>
             <View style={styles.gloss} />
             <View style={styles.faceInner}>
               <Pips face={shownFace} />
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   sideFace: { position: "absolute", overflow: "hidden" },
   frontFace: {
     borderWidth: 2.5,
-    borderColor: colors.gold,
+    borderColor: colors.accent,
     shadowOffset: { width: 0, height: 14 },
     shadowOpacity: 0.4,
     shadowRadius: 18,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: colors.goldLight,
+    backgroundColor: colors.accent,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.5,

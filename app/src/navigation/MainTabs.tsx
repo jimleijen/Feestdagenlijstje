@@ -9,8 +9,9 @@ import { DobbelspelNavigator } from "./DobbelspelNavigator";
 import { LootjesNavigator } from "./LootjesNavigator";
 import { SecretSantaNavigator } from "./SecretSantaNavigator";
 import { WishlistNavigator } from "./WishlistNavigator";
+import { MainTabParamList } from "./types";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainTabParamList>();
 
 // Each destination keeps its own signature color on the icon at all times — only the label
 // dims when inactive. That's what makes the bar read as colorful/festive instead of the usual
@@ -29,8 +30,8 @@ export function MainTabs() {
       screenOptions={{
         headerShown: false,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border, height: 62, paddingBottom: 8, paddingTop: 6 },
-        tabBarLabelStyle: { fontFamily: fonts.display, fontSize: 11 },
+        tabBarStyle: { backgroundColor: colors.header, borderTopColor: colors.border, height: 62, paddingBottom: 8, paddingTop: 6 },
+        tabBarLabelStyle: { fontFamily: fonts.bodyBold, fontSize: 11 },
       }}
     >
       <Tab.Screen

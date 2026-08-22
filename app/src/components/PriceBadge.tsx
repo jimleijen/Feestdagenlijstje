@@ -71,7 +71,7 @@ export function PriceBadge({ itemId, sourceUrl }: { itemId: string; sourceUrl?: 
 
       {shopCount > 0 ? (
         <Pressable onPress={() => setExpanded((e) => !e)} style={{ marginTop: spacing.xs }}>
-          <Text style={{ color: colors.gold, fontSize: 13, fontWeight: "600" }}>
+          <Text style={{ color: colors.accent, fontSize: 13, fontWeight: "600" }}>
             {expanded ? "Verberg winkels" : `Vergelijk ${shopCount} winkel${shopCount > 1 ? "s" : ""} ›`}
           </Text>
         </Pressable>
@@ -96,7 +96,7 @@ export function PriceBadge({ itemId, sourceUrl }: { itemId: string; sourceUrl?: 
             disabled={refreshing}
             style={{ flexDirection: "row", alignItems: "center", padding: spacing.sm, backgroundColor: colors.surfaceAlt }}
           >
-            {refreshing ? <ActivityIndicator size="small" color={colors.gold} /> : null}
+            {refreshing ? <ActivityIndicator size="small" color={colors.accent} /> : null}
             <Text style={{ color: colors.textMuted, fontSize: 12, marginLeft: refreshing ? 6 : 0 }}>
               Ververs prijzen{comparison ? ` · bijgewerkt ${relativeTime(comparison.fetchedAt)}` : ""}
             </Text>
@@ -151,7 +151,7 @@ function ShopRow({
           € {price.toFixed(2)}
         </Text>
       ) : isOwnLink ? (
-        <Text style={{ color: colors.gold, fontSize: 12 }}>Openen ›</Text>
+        <Text style={{ color: colors.accent, fontSize: 12 }}>Openen ›</Text>
       ) : null}
     </Pressable>
   );

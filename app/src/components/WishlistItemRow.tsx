@@ -35,7 +35,7 @@ function OwnerItemRow({ item }: { item: WishlistItem }) {
       </View>
       {isReserved ? (
         <View style={styles.mysteryBanner}>
-          <Ionicons name="sparkles" size={16} color={colors.gold} />
+          <Ionicons name="sparkles" size={16} color={colors.accent} />
           <Text style={styles.mysteryText}>Iemand heeft dit al voor je geregeld — verrassing!</Text>
         </View>
       ) : null}
@@ -102,7 +102,7 @@ function GuestItemRow({
           </View>
           <View style={{ flex: 1, marginLeft: spacing.md }}>
             <Muted>Door iemand anders afgestreept</Muted>
-            <Text style={{ color: colors.gold, fontWeight: "600" }} onPress={() => setRevealed(true)}>
+            <Text style={{ color: colors.accent, fontWeight: "600" }} onPress={() => setRevealed(true)}>
               Toon kado ›
             </Text>
           </View>

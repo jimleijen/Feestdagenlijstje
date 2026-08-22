@@ -25,6 +25,8 @@ export function Screen({ children, style, ...rest }: ViewProps) {
   );
 }
 
+// Bento-style card: white, generously rounded, shadow-only (no border) so a screen full of
+// cards reads as soft floating tiles rather than boxed-in panels.
 export function Card({ children, style, ...rest }: ViewProps) {
   return (
     <View style={[styles.card, shadow.card, style]} {...rest}>
@@ -43,7 +45,7 @@ export function TextInput({ style, ...rest }: TextInputProps) {
 const GRADIENTS: Record<string, [string, string]> = {
   primary: [colors.primary, colors.primaryDark],
   secondary: [colors.secondary, colors.secondaryDark],
-  danger: [colors.danger, "#7E1B15"],
+  danger: [colors.danger, "#C93A24"],
 };
 
 export function Button({
@@ -75,9 +77,9 @@ export function Button({
         ]}
       >
         {loading ? (
-          <ActivityIndicator color={colors.gold} />
+          <ActivityIndicator color={colors.accent} />
         ) : (
-          <Text style={[styles.buttonText, { color: colors.gold }]}>{title}</Text>
+          <Text style={[styles.buttonText, { color: colors.accent }]}>{title}</Text>
         )}
       </Pressable>
     );
@@ -94,8 +96,8 @@ export function Button({
         pressed && !isDisabled && { opacity: 0.85 },
       ]}
     >
-      <LinearGradient colors={GRADIENTS[variant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={[styles.button, styles.buttonBorder]}>
-        {loading ? <ActivityIndicator color={colors.goldLight} /> : <Text style={styles.buttonText}>{title}</Text>}
+      <LinearGradient colors={GRADIENTS[variant]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.button}>
+        {loading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={[styles.buttonText, { color: "#FFFFFF" }]}>{title}</Text>}
       </LinearGradient>
     </Pressable>
   );
@@ -137,16 +139,15 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.lg,
     marginBottom: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   input: {
     borderWidth: 1.5,
-    borderColor: colors.gold,
+    borderColor: colors.border,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     fontSize: 16,
+    fontFamily: fonts.body,
     color: colors.fieldText,
     backgroundColor: colors.fieldBackground,
     marginBottom: spacing.md,
@@ -160,22 +161,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonBorder: { borderWidth: 1, borderColor: "rgba(232, 205, 134, 0.5)" },
   buttonSpacing: { marginBottom: spacing.md },
   ghostButton: {
-    backgroundColor: "transparent",
+    backgroundColor: colors.surfaceAlt,
     borderWidth: 1.5,
-    borderColor: colors.gold,
+    borderColor: colors.accent,
   },
-  buttonText: { color: colors.goldLight, fontWeight: "700", fontSize: 17, letterSpacing: 0.2 },
-  heading: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.gold, marginBottom: spacing.sm },
+  buttonText: { fontFamily: fonts.bodyBold, fontSize: 17, letterSpacing: 0.2 },
+  heading: { fontFamily: fonts.displayBold, fontSize: 26, color: colors.accent, marginBottom: spacing.sm },
   subHeading: { fontFamily: fonts.display, fontSize: 18, color: colors.text, marginBottom: spacing.sm },
-  muted: { color: colors.textMuted, fontSize: 14, marginBottom: spacing.sm },
+  muted: { fontFamily: fonts.body, color: colors.textMuted, fontSize: 14, marginBottom: spacing.sm },
   emptyState: { alignItems: "center", paddingVertical: spacing.xl },
   emptyStateIcon: { fontSize: 44, marginBottom: spacing.md },
   emptyStateSubtitle: {
-    fontFamily: fonts.display,
-    fontStyle: "italic",
+    fontFamily: fonts.bodyItalic,
     color: colors.textMuted,
     fontSize: 15,
     textAlign: "center",

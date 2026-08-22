@@ -4,6 +4,7 @@ import { Text } from "react-native";
 import { apiErrorMessage, useAuth } from "../../auth/AuthContext";
 import { Button, Heading, Muted, Screen, TextInput } from "../../components/ui";
 import { AuthStackParamList } from "../../navigation/types";
+import { colors } from "../../theme/colors";
 
 export function LoginScreen({ navigation }: NativeStackScreenProps<AuthStackParamList, "Login">) {
   const { login } = useAuth();
@@ -37,7 +38,7 @@ export function LoginScreen({ navigation }: NativeStackScreenProps<AuthStackPara
         style={{ marginTop: 20 }}
       />
       <TextInput placeholder="Wachtwoord" value={password} onChangeText={setPassword} secureTextEntry />
-      {error ? <Text style={{ color: "#C4392F", marginBottom: 8 }}>{error}</Text> : null}
+      {error ? <Text style={{ color: colors.danger, marginBottom: 8 }}>{error}</Text> : null}
       <Button title="Inloggen" onPress={handleLogin} loading={loading} />
       <Button title="Nog geen account? Registreer" variant="ghost" onPress={() => navigation.navigate("Register")} />
     </Screen>

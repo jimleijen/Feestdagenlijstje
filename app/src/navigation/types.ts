@@ -3,6 +3,14 @@ export type AuthStackParamList = {
   Register: undefined;
 };
 
+export type MainTabParamList = {
+  Home: undefined;
+  Wensenlijstjes: undefined;
+  Lootjes: undefined;
+  "Secret Santa": undefined;
+  Spel: undefined;
+};
+
 export type WishlistStackParamList = {
   WishlistList: undefined;
   WishlistDetail: { wishlistId?: string; shareCode?: string };
